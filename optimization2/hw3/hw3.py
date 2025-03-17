@@ -45,7 +45,7 @@ def gradient(weights:np.ndarray[float], batch_size:int=1) -> np.ndarray[float]:
         grad += (1 / batch_size) * x_multiplied_y * (1 - (1 / denominator))
     return grad   
 
-def classify(weights:np.ndarray[float]) -> float:
+def load_test_data():
     test_data = pd.read_csv(test_csv)
     test_labels = test_data.iloc[:, 0].to_numpy()
     test_pixels = test_data.iloc[:, 1:].to_numpy()
@@ -62,14 +62,22 @@ def classify(weights:np.ndarray[float]) -> float:
 
     if normalize:
         test_X /= 255.0
+    return test_X, test_y
+
+def classify(w):
+    x_test, y_test = load_test_data()
+    print("test_data: ", classify_test(x_test, y_test, weights=w))
+    print("training_data: ", classify_test( X, y, weights=w))
+
+def classify_test(test_X, test_y, weights:np.ndarray[float]) -> float:
+    
     predictions = np.dot(test_X, weights)    
     predicted_labels = np.sign(predictions)
-
     summation = 0
-    for index in range(500):
+    for index in range(test_y.shape[0]):
         if predicted_labels[index] == test_y[index]:
             summation += 1
-    return summation / 500
+    return summation / test_y.shape[0]
 
 def log_function(weights:np.ndarray[float]) -> float:
     return np.log(function(weights))  
@@ -106,7 +114,7 @@ def sgd(lr:str, save_fig:bool=False, nbr_iterations:int = 2000, batch_size=1) ->
     return weights
 
 # 1a
-w = sgd(lr='a', save_fig=False, nbr_iterations=2000) 
+# w = sgd(lr='a', save_fig=False, nbr_iterations=2000) 
 
 # 2a
 # w = sgd(lr='b', save_fig=False, nbr_iterations=2000) 
@@ -114,4 +122,5 @@ w = sgd(lr='a', save_fig=False, nbr_iterations=2000)
 # 3a
 # w = sgd(lr='b', save_fig=True, nbr_iterations=2000, batch_size=4000) 
 
-print(classify(w))
+# print(function(weights=w))
+# print(classify(w=w))
